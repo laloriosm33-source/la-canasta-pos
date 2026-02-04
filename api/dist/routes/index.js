@@ -1,0 +1,31 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const product_routes_1 = __importDefault(require("./product.routes"));
+const category_routes_1 = __importDefault(require("./category.routes"));
+const branch_routes_1 = __importDefault(require("./branch.routes"));
+const inventory_routes_1 = __importDefault(require("./inventory.routes"));
+const sale_routes_1 = __importDefault(require("./sale.routes"));
+const customer_routes_1 = __importDefault(require("./customer.routes"));
+const auth_routes_1 = __importDefault(require("./auth.routes"));
+const user_routes_1 = __importDefault(require("./user.routes"));
+const transfer_routes_1 = __importDefault(require("./transfer.routes"));
+const provider_routes_1 = __importDefault(require("./provider.routes"));
+const router = (0, express_1.Router)();
+router.use('/auth', auth_routes_1.default);
+router.use('/products', product_routes_1.default);
+router.use('/categories', category_routes_1.default);
+router.use('/branches', branch_routes_1.default);
+router.use('/inventory', inventory_routes_1.default);
+router.use('/sales', sale_routes_1.default);
+router.use('/customers', customer_routes_1.default);
+router.use('/users', user_routes_1.default);
+router.use('/transfers', transfer_routes_1.default);
+router.use('/providers', provider_routes_1.default);
+router.get('/', (req, res) => {
+    res.json({ message: 'La Canasta API v1' });
+});
+exports.default = router;

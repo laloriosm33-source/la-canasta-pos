@@ -1,0 +1,24 @@
+# Archivos de desarrollo local
+node_modules/
+dist/
+.env
+.env.local
+
+# Base de datos SQLite (desarrollo)
+*.db
+*.db-journal
+
+# Prisma
+.prisma/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
