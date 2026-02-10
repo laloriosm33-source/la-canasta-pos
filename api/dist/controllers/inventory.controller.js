@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adjustInventory = exports.updateStock = exports.getInventoryByBranch = void 0;
+exports.getInventoryHistory = exports.adjustInventory = exports.updateStock = exports.getInventoryByBranch = void 0;
 const prisma_1 = __importDefault(require("../config/prisma"));
 // Get inventory for a specific branch
 const getInventoryByBranch = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -101,3 +101,20 @@ const adjustInventory = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.adjustInventory = adjustInventory;
+const getInventoryHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const history = yield prisma_1.default.inventoryAdjustment.findMany({
+            include: {
+                product: { select: { name: true, unit: true } },
+                user: { select: { name: true } }
+            },
+            orderBy: { date: 'desc' },
+            take: 50
+        });
+        res.json(history);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error fetching history' });
+    }
+});
+exports.getInventoryHistory = getInventoryHistory;

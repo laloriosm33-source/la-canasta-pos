@@ -14,8 +14,14 @@ const auth_routes_1 = __importDefault(require("./auth.routes"));
 const user_routes_1 = __importDefault(require("./user.routes"));
 const transfer_routes_1 = __importDefault(require("./transfer.routes"));
 const provider_routes_1 = __importDefault(require("./provider.routes"));
+const finance_routes_1 = __importDefault(require("./finance.routes"));
+const system_routes_1 = __importDefault(require("./system.routes"));
+const settings_routes_1 = __importDefault(require("./settings.routes"));
+const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = (0, express_1.Router)();
 router.use('/auth', auth_routes_1.default);
+// Protect all following routes
+router.use(auth_middleware_1.authMiddleware);
 router.use('/products', product_routes_1.default);
 router.use('/categories', category_routes_1.default);
 router.use('/branches', branch_routes_1.default);
@@ -25,6 +31,9 @@ router.use('/customers', customer_routes_1.default);
 router.use('/users', user_routes_1.default);
 router.use('/transfers', transfer_routes_1.default);
 router.use('/providers', provider_routes_1.default);
+router.use('/finance', finance_routes_1.default);
+router.use('/system', system_routes_1.default);
+router.use('/settings', settings_routes_1.default);
 router.get('/', (req, res) => {
     res.json({ message: 'La Canasta API v1' });
 });

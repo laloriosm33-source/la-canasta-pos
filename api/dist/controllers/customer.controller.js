@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.recordPayment = exports.updateCustomer = exports.createCustomer = exports.getCustomers = void 0;
+exports.deleteCustomer = exports.recordPayment = exports.updateCustomer = exports.createCustomer = exports.getCustomers = void 0;
 const prisma_1 = __importDefault(require("../config/prisma"));
 const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -30,9 +30,9 @@ const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.getCustomers = getCustomers;
 const createCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, phone, email, rfc, address, creditLimit, branchId } = req.body;
+        const { name, phone, email, rfc, taxRegime, address, zipCode, creditLimit, branchId } = req.body;
         const customer = yield prisma_1.default.customer.create({
-            data: { name, phone, email, rfc, address, creditLimit, branchId }
+            data: { name, phone, email, rfc, taxRegime, address, zipCode, creditLimit, branchId }
         });
         res.status(201).json(customer);
     }
@@ -84,3 +84,14 @@ const recordPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.recordPayment = recordPayment;
+const deleteCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        yield prisma_1.default.customer.delete({ where: { id } });
+        res.json({ message: 'Customer deleted successfully' });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error deleting customer' });
+    }
+});
+exports.deleteCustomer = deleteCustomer;

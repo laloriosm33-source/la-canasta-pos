@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
+import { logAction } from './system.controller';
 
 export const getSettings = async (req: Request, res: Response) => {
     try {
@@ -27,6 +28,10 @@ export const updateSettings = async (req: Request, res: Response) => {
         });
 
         await prisma.$transaction(transactions);
+        
+        const userId = (req as any).user?.id || 'System';
+        await logAction(userId, 'CONFIG_ACTUALIZADA', 'Parámetros maestros del sistema modificados');
+
         res.json({ message: 'Parámetros del sistema actualizados con éxito' });
     } catch (error) {
         res.status(500).json({ error: 'Error al persistir configuración' });

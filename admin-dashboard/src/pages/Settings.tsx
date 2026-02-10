@@ -11,6 +11,7 @@ const Settings = () => {
         phone: '555-0000',
         currency: 'MXN',
         timezone: 'CST',
+        logoUrl: '',
         receiptHeader: '¡Gracias por su compra!',
         receiptFooter: 'Este no es un comprobante fiscal.'
     });
@@ -26,7 +27,7 @@ const Settings = () => {
             if (Object.keys(res.data).length > 0) {
                 setSettings(prev => ({ ...prev, ...res.data }));
             }
-        } catch (error) {
+        } catch {
             console.error("Error al cargar configuración remota");
         }
     };
@@ -49,12 +50,18 @@ const Settings = () => {
                     fontFamily: 'Inter, sans-serif'
                 }
             });
-        } catch (error) {
+        } catch {
             toast.error("Error al persistir configuración");
         } finally {
             setLoading(false);
         }
     };
+
+    if (loading) return (
+        <div className="h-[60vh] flex items-center justify-center">
+            <div className="w-12 h-12 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    );
 
     return (
         <div className="max-w-5xl mx-auto space-y-12 animate-fade-in pb-20">
@@ -131,6 +138,13 @@ const Settings = () => {
                             </div>
                         </div>
                         <div className="p-10 space-y-8">
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-2 italic">URL del Logo (para tickets)</label>
+                                <input name="logoUrl" className="w-full p-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-8 focus:ring-slate-900/5 focus:bg-white outline-none font-bold text-slate-800 transition-all text-lg shadow-inner"
+                                    placeholder="https://ejemplo.com/logo.png o /logo.png"
+                                    value={settings.logoUrl} onChange={handleChange} />
+                                <p className="text-[10px] text-slate-400 ml-2 mt-1">Puedes usar una URL externa o colocar tu logo en /public/logo.png y usar "/logo.png"</p>
+                            </div>
                             <div className="space-y-2">
                                 <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-2 italic">Encabezado de Comprobante</label>
                                 <textarea name="receiptHeader" rows={2} className="w-full p-6 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-8 focus:ring-slate-900/5 focus:bg-white font-bold text-slate-700 shadow-inner resize-none"

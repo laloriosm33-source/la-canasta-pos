@@ -1,0 +1,31 @@
+services:
+  # Backend API
+  - type: web
+    name: lacanasta-api
+    env: node
+    plan: free # Plan gratuito de Web Service
+    rootDir: api
+    # 1. Instalar dependencias
+    # 2. Copiar schema de producción (PostgreSQL) sobre el de desarrollo
+    # 3. Regenerar cliente Prisma para PostgreSQL
+    # 4. Compilar TypeScript
+    buildCommand: npm install && cp prisma/schema.prod.prisma prisma/schema.prisma && npx prisma generate && npm run build
+    # 1. Aplicar migraciones a la base de datos PostgreSQL
+    # 2. Iniciar servidor
+    startCommand: npx prisma migrate deploy && npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lacanasta-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+
+databases:
+  # Base de Datos (PostgreSQL) - Plan Gratuito
+  - name: lacanasta-db
+    databaseName: lacanasta
+    user: lacanasta
+    plan: free

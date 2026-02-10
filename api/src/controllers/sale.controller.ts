@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
+import { logAction } from './system.controller';
 
 export const getSales = async (req: Request, res: Response) => {
     try {
@@ -114,6 +115,9 @@ export const createSale = async (req: Request, res: Response) => {
 
             return sale;
         });
+
+        // 4. Log Action
+        await logAction(userId, 'VENTA_REALIZADA', `Venta con éxito por un total de $${total} - ID: ${result.id}`);
 
         res.status(201).json(result);
 

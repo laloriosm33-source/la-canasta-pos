@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
+import { logAction } from './system.controller';
 
 // --- Cash Movements ---
 export const getCashMovements = async (req: Request, res: Response) => {
@@ -22,6 +23,7 @@ export const createCashMovement = async (req: Request, res: Response) => {
         const movement = await prisma.cashMovement.create({
             data: { type, amount, reason, branchId, userId }
         });
+        await logAction(userId, 'FLUJO_CAJA', `${type}: $${amount} - ${reason}`);
         res.status(201).json(movement);
     } catch (error) {
         res.status(500).json({ error: 'Error creating cash movement' });
@@ -60,6 +62,7 @@ export const openShift = async (req: Request, res: Response) => {
                 startTime: new Date()
             }
         });
+        await logAction(userId, 'TURNO_ABIERTO', `Inicio jornada con fondo de $${initialCash}`);
         res.status(201).json(shift);
     } catch (error) {
         res.status(500).json({ error: 'Error opening shift' });
@@ -111,6 +114,7 @@ export const closeShift = async (req: Request, res: Response) => {
                 difference
             }
         });
+        await logAction(shift.userId, 'TURNO_CERRADO', `Fin jornada. Efectivo: $${finalCashActual}. Diferencia: $${difference}`);
         res.json(updatedShift);
     } catch (error) {
         res.status(500).json({ error: 'Error al cerrar turno y calcular balance' });

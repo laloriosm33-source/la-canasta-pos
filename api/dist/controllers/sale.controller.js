@@ -14,10 +14,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSale = exports.getSaleById = exports.getSales = void 0;
 const prisma_1 = __importDefault(require("../config/prisma"));
+const system_controller_1 = require("./system.controller");
 const getSales = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const sales = yield prisma_1.default.saleHeader.findMany({
-            include: { user: true, branch: true, customer: true, details: true },
+            include: {
+                user: true,
+                branch: true,
+                customer: true,
+                details: {
+                    include: {
+                        product: {
+                            include: { category: true }
+                        }
+                    }
+                }
+            },
             orderBy: { date: 'desc' }
         });
         res.json(sales);
@@ -45,7 +57,7 @@ const getSaleById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getSaleById = getSaleById;
 const createSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { branchId, userId, customerId, total, paymentMethod, details } = req.body;
+        const { branchId, userId, shiftId, customerId, total, paymentMethod, details } = req.body;
         // details: [{ productId, quantity, unitPrice, subtotal }]
         // Use transaction
         const result = yield prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
@@ -54,6 +66,7 @@ const createSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 data: {
                     branchId,
                     userId,
+                    shiftId,
                     customerId,
                     total,
                     paymentMethod,
@@ -111,6 +124,8 @@ const createSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             }
             return sale;
         }));
+        // 4. Log Action
+        yield (0, system_controller_1.logAction)(userId, 'VENTA_REALIZADA', `Venta con éxito por un total de $${total} - ID: ${result.id}`);
         res.status(201).json(result);
     }
     catch (error) {
