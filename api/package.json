@@ -8,8 +8,8 @@
     "build": "tsc",
     "build:render": "cp prisma/schema.prod.prisma prisma/schema.prisma && npx prisma generate && tsc",
     "start": "node dist/server.js",
-    "start:render": "npx prisma migrate deploy && node dist/server.js",
-    "postinstall": "prisma generate",
+    "start:render": "node dist/server.js",
+    "postinstall": "node -e \"try { const fs = require('fs'); fs.copyFileSync('prisma/schema.prod.prisma', 'prisma/schema.prisma'); console.log('Schema copied'); } catch (e) { console.log('Schema copy skipped/failed', e.message); }\" && prisma generate",
     "migrate:deploy": "prisma migrate deploy",
     "db:push": "prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1"
