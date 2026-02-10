@@ -16,7 +16,8 @@ const Login = () => {
 
     useEffect(() => {
         // Check if system is initialized
-        fetch('http://localhost:3000/api/auth/init-status')
+        const API_URL = import.meta.env.VITE_API_URL || 'https://lacanasta-api-h629.onrender.com/api';
+        fetch(`${API_URL}/auth/init-status`)
             .then(res => res.json())
             .then(data => setIsInit(data.initialized))
             .catch(err => console.error('Error al verificar estado inicial', err));
@@ -32,7 +33,8 @@ const Login = () => {
                 ? { email, password, name, role: 'ADMIN' }
                 : { email, password };
 
-            const res = await fetch(`http://localhost:3000/api/auth${endpoint}`, {
+            const API_URL = import.meta.env.VITE_API_URL || 'https://lacanasta-api-h629.onrender.com/api';
+            const res = await fetch(`${API_URL}/auth${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

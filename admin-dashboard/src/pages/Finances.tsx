@@ -40,14 +40,6 @@ interface Expense {
     branch: { name: string };
 }
 
-interface SystemLog {
-    id: string;
-    date: string;
-    action: string;
-    details: string | null;
-    user: { name: string } | null;
-}
-
 const Finances = () => {
     const { selectedBranchId } = useStore();
     const [movements, setMovements] = useState<CashMovement[]>([]);
@@ -56,7 +48,7 @@ const Finances = () => {
     const [loading, setLoading] = useState(true);
     const [isMovementModalOpen, setIsMovementModalOpen] = useState(false);
     const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
-    const [logs, setLogs] = useState<SystemLog[]>([]);
+    const [logs, setLogs] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'MOVEMENTS' | 'SHIFTS' | 'EXPENSES' | 'AUDIT'>('MOVEMENTS');
 
     // Form States
@@ -77,7 +69,7 @@ const Finances = () => {
             setShifts(sRes.data);
             setExpenses(eRes.data);
             setLogs(logRes.data);
-        } catch {
+        } catch (error) {
             toast.error('Error al sincronizar datos financieros');
         } finally {
             setLoading(false);
@@ -103,7 +95,7 @@ const Finances = () => {
             setIsMovementModalOpen(false);
             setMovementData({ type: 'IN', amount: '', reason: '', branchId: '' });
             fetchData();
-        } catch {
+        } catch (error) {
             toast.error('Error al procesar flujo de caja');
         }
     };
@@ -118,7 +110,7 @@ const Finances = () => {
             });
             toast.success('Turno cerrado y sincronizado');
             fetchData();
-        } catch {
+        } catch (error) {
             toast.error('Error al cerrar el turno');
         }
     };
@@ -136,7 +128,7 @@ const Finances = () => {
             setIsExpenseModalOpen(false);
             setExpenseData({ amount: '', description: '', category: 'General', branchId: '' });
             fetchData();
-        } catch {
+        } catch (error) {
             toast.error('Error al registrar gasto');
         }
     };
@@ -200,12 +192,12 @@ const Finances = () => {
             <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-200/50 border border-slate-50 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-slate-50 border-b border-slate-100 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">
+                        <thead className="bg-slate-50/50 text-slate-400 font-black text-[10px] uppercase tracking-[0.25em] border-b border-slate-50">
                             <tr>
-                                <th className="px-10 py-8">Referencia / Fecha</th>
-                                <th className="px-10 py-8">{activeTab === 'AUDIT' ? 'Acción / Evento' : 'Categoría / Concepto'}</th>
-                                <th className="px-10 py-8">{activeTab === 'AUDIT' ? 'Detalles' : 'Nodo / Operador'}</th>
-                                <th className="px-10 py-8 text-right">{activeTab === 'AUDIT' ? 'Usuario' : 'Importe Neto'}</th>
+                                <th className="px-10 py-8 italic">Referencia / Fecha</th>
+                                <th className="px-10 py-8 italic">Categoría / Razón</th>
+                                <th className="px-10 py-8 italic">Nodo / Operador</th>
+                                <th className="px-10 py-8 italic text-right">Net Value</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -285,23 +277,27 @@ const Finances = () => {
                                     </td>
                                 </tr>
                             ))}
-                            {activeTab === 'AUDIT' && logs.map((log) => (
-                                <tr key={log.id} className="hover:bg-slate-50 transition-colors group">
-                                    <td className="px-10 py-8 font-bold">
-                                        <p className="text-sm text-slate-900">{new Date(log.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</p>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <span className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest">{log.action}</span>
-                                    </td>
-                                    <td className="px-10 py-8">
-                                        <p className="text-sm font-bold text-slate-800">{log.details || '---'}</p>
-                                    </td>
-                                    <td className="px-10 py-8 text-right">
-                                        <p className="text-[10px] font-black text-slate-900 uppercase italic">{log.user?.name || 'Sistema'}</p>
-                                    </td>
-                                </tr>
-                            ))}
                         </tbody>
+                        {activeTab === 'AUDIT' && (
+                            <tbody className="divide-y divide-slate-50 italic">
+                                {logs.map((log) => (
+                                    <tr key={log.id} className="hover:bg-slate-50 transition-colors group">
+                                        <td className="px-10 py-8 italic font-bold">
+                                            <p className="text-sm text-slate-900">{new Date(log.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</p>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <span className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest">{log.action}</span>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <p className="text-sm font-bold text-slate-800">{log.details || '---'}</p>
+                                        </td>
+                                        <td className="px-10 py-8 text-right">
+                                            <p className="text-[10px] font-black text-slate-900 uppercase italic">{log.user?.name || 'System'}</p>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        )}
                     </table>
                 </div>
 

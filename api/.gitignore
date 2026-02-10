@@ -1,6 +1,6 @@
 # Archivos de desarrollo local
 node_modules/
-dist/
+# dist/
 .env
 .env.local
 

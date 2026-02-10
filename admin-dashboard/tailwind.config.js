@@ -30,7 +30,6 @@ export default {
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
-                outfit: ['Outfit', 'sans-serif'],
             }
         },
     },

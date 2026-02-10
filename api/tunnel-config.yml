@@ -1,7 +1,0 @@
-tunnel: la-canasta-api
-credentials-file: C:\Users\eduar\.cloudflared\cert.pem
-
-ingress:
-  - hostname: api.lacanasta-erp.com
-    service: http://localhost:3000
-  - service: http_status:404
