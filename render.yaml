@@ -10,9 +10,8 @@ services:
     # 3. Regenerar cliente Prisma para PostgreSQL
     # 4. Compilar TypeScript
     buildCommand: npm install && cp prisma/schema.prod.prisma prisma/schema.prisma && npx prisma generate && npm run build
-    # 1. Aplicar migraciones a la base de datos PostgreSQL
-    # 2. Iniciar servidor
-    startCommand: npx prisma migrate deploy && npm start
+    # Iniciar servidor (sin migración automática para evitar fallos de timeout)
+    startCommand: npm start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
