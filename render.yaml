@@ -5,8 +5,8 @@ services:
     env: node
     plan: free # Plan gratuito de Web Service
     rootDir: api
-    # Forzamos permisos de ejecución y luego generamos la base de datos
-    buildCommand: npm install && chmod +x ./node_modules/.bin/prisma && npm run render-build
+    # Pasos blindados: instalar sin scripts automáticos, copiar esquema y generar cliente Prisma manual
+    buildCommand: npm install --no-scripts && cp prisma/schema.prod.prisma prisma/schema.prisma && npx prisma generate
     # Iniciar servidor
     startCommand: npm start
     envVars:

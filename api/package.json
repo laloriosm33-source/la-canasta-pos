@@ -7,7 +7,6 @@
     "dev": "ts-node src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "render-build": "node scripts/render-build.js",
     "migrate:deploy": "npx prisma migrate deploy",
     "db:push": "npx prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1"
