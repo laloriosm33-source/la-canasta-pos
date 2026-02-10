@@ -16,6 +16,37 @@ import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
+// 🚑 Ruta de Emergencia para Reparar Base de Datos
+router.get('/setup-db', async (req, res) => {
+    // Protección simple
+    if (req.query.key !== 'lacanasta123') {
+        return res.status(403).json({ error: 'Acceso Denegado' });
+    }
+    
+    try {
+        const { exec } = require('child_process');
+        // Ejecutar migración de base de datos
+        exec('npx prisma migrate deploy', (error: any, stdout: any, stderr: any) => {
+            if (error) {
+                console.error(`Error de migración: ${error}`);
+                return res.status(500).json({ 
+                    status: 'error', 
+                    mensaje: 'Falló la reparación de la base de datos',
+                    detalle: error.message,
+                    stderr 
+                });
+            }
+            res.json({ 
+                status: 'success', 
+                mensaje: '¡Base de datos reparada correctamente!', 
+                output: stdout 
+            });
+        });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 router.use('/auth', authRoutes);
 
 // Protect all following routes
