@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const transfer_controller_1 = require("../controllers/transfer.controller");
+const router = (0, express_1.Router)();
+router.get('/', transfer_controller_1.getTransfers);
+router.post('/', transfer_controller_1.createTransfer);
+router.post('/:id/complete', transfer_controller_1.completeTransfer);
+router.post('/:id/cancel', transfer_controller_1.cancelTransfer);
+exports.default = router;

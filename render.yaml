@@ -5,10 +5,10 @@ services:
     env: node
     plan: free # Plan gratuito de Web Service
     rootDir: api
-    # Usamos Node.js para copiar el archivo de schema, es más seguro y compatible
-    buildCommand: npm install && node -e "const fs = require('fs'); fs.copyFileSync('prisma/schema.prod.prisma', 'prisma/schema.prisma')" && npx prisma generate && npm run build
-    # Iniciar servidor (sin migración automática para evitar fallos de inicio)
-    startCommand: npm start
+    # Eliminamos TypeScript del servidor para ahorrar memoria. Solo generamos cliente Prisma.
+    buildCommand: npm install && cp prisma/schema.prod.prisma prisma/schema.prisma && npx prisma generate
+    # Ejecutamos código PRE-COMPILADO (dist) que subimos desde local. Mucho más ligero y estable.
+    startCommand: node dist/server.js
     envVars:
       - key: DATABASE_URL
         fromDatabase:
