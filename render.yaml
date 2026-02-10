@@ -6,7 +6,7 @@ services:
     plan: free # Plan gratuito de Web Service
     rootDir: api
     # Build más simple y compatible
-    buildCommand: npm install
+    buildCommand: npm install && npm run render-build
     # Iniciar servidor
     startCommand: npm start
     envVars:
