@@ -5,11 +5,8 @@ services:
     env: node
     plan: free # Plan gratuito de Web Service
     rootDir: api
-    # 1. Instalar dependencias
-    # 2. Copiar schema de producción (PostgreSQL) sobre el de desarrollo
-    # 3. Regenerar cliente Prisma para PostgreSQL
-    # 4. Compilar TypeScript
-    buildCommand: npm install && cp prisma/schema.prod.prisma prisma/schema.prisma && npx prisma generate && npm run build
+    # Usamos Node.js para copiar el archivo de schema, es más seguro y compatible
+    buildCommand: npm install && node -e "const fs = require('fs'); fs.copyFileSync('prisma/schema.prod.prisma', 'prisma/schema.prisma')" && npx prisma generate && npm run build
     # Iniciar servidor (sin migración automática para evitar fallos de timeout)
     startCommand: npm start
     envVars:
