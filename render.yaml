@@ -5,8 +5,8 @@ services:
     env: node
     plan: free # Plan gratuito de Web Service
     rootDir: api
-    # Build más simple y compatible
-    buildCommand: npm install && npm run render-build
+    # Forzamos permisos de ejecución y luego generamos la base de datos
+    buildCommand: npm install && chmod +x ./node_modules/.bin/prisma && npm run render-build
     # Iniciar servidor
     startCommand: npm start
     envVars:
