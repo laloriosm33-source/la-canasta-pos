@@ -7,8 +7,8 @@ services:
     rootDir: api
     # Usamos Node.js para copiar el archivo de schema, es más seguro y compatible
     buildCommand: npm install && node -e "const fs = require('fs'); fs.copyFileSync('prisma/schema.prod.prisma', 'prisma/schema.prisma')" && npx prisma generate && npm run build
-    # Iniciar servidor y ejecutar migraciones automáticamente
-    startCommand: npx prisma migrate deploy && npm start
+    # Iniciar servidor (sin migración automática para evitar fallos de inicio)
+    startCommand: npm start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
