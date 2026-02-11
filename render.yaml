@@ -21,13 +21,21 @@ services:
       - key: CORS_ORIGIN
         value: https://lacanasta-erp.com
       - key: JWT_SECRET
-        sync: false # Render pedirá este valor si no existe
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: https://lacanasta-erp.com
       - key: DATABASE_URL
-        sync: false # Render pedirá la URL de Supabase
+        fromDatabase:
+          name: lacanasta-db
+          property: connectionString
 
 databases:
-  # Base de Datos (PostgreSQL) - Plan Gratuito
   - name: lacanasta-db
     databaseName: lacanasta
     user: lacanasta
     plan: free
+    region: oregon 
