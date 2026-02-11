@@ -448,24 +448,24 @@ const POS = () => {
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-10 bg-slate-50/50 border-t border-slate-100 space-y-8">
+                <div className="p-10 bg-slate-50/50 backdrop-blur-md border-t border-slate-100 space-y-8 relative z-10">
                     <div className="grid grid-cols-3 gap-4">
                         {[
-                            { id: 'CASH', label: 'Efectivo', icon: Banknote, active: paymentMethod === 'CASH', color: 'from-emerald-400/20 to-emerald-600/20' },
-                            { id: 'TRANSFER', label: 'Transf.', icon: Smartphone, active: paymentMethod === 'TRANSFER', color: 'from-blue-400/20 to-blue-600/20' },
-                            { id: 'CREDIT', label: 'Fiado', icon: CreditCard, active: paymentMethod === 'CREDIT', color: 'from-rose-400/20 to-rose-600/20' },
+                            { id: 'CASH', label: 'Efectivo', icon: Banknote, active: paymentMethod === 'CASH' },
+                            { id: 'TRANSFER', label: 'Transf.', icon: Smartphone, active: paymentMethod === 'TRANSFER' },
+                            { id: 'CREDIT', label: 'Fiado', icon: CreditCard, active: paymentMethod === 'CREDIT' },
                         ].map((m) => (
                             <button
                                 key={m.id}
                                 onClick={() => (m.id === 'CREDIT' && !selectedCustomer) ? toast.error('Selecciona el Cliente para el Crédito') : setPaymentMethod(m.id as 'CASH' | 'TRANSFER' | 'CREDIT')}
-                                className={`relative p-5 rounded-[2rem] border-2 transition-all duration-500 flex flex-col items-center gap-3 overflow-hidden
-                                ${m.active ? 'border-indigo-500 bg-white shadow-2xl scale-[1.05]' : 'border-slate-200 text-slate-400 bg-white hover:border-slate-300'}`}
+                                className={`relative p-5 rounded-[2rem] border-2 transition-all duration-700 flex flex-col items-center gap-3 overflow-hidden group/btn
+                                ${m.active ? 'border-indigo-500 bg-white shadow-2xl scale-[1.05]' : 'border-slate-100 text-slate-400 bg-white/50 hover:border-slate-300'}`}
                             >
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${m.active ? 'bg-slate-900 text-white' : 'bg-slate-50'}`}>
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${m.active ? 'bg-slate-900 text-white rotate-6' : 'bg-slate-50 group-hover/btn:rotate-12'}`}>
                                     <m.icon size={24} />
                                 </div>
                                 <span className="text-[9px] font-black uppercase tracking-[0.3em]">{m.label}</span>
-                                {m.active && <CheckCircle2 size={14} className="absolute top-4 right-4 text-emerald-500" />}
+                                {m.active && <CheckCircle2 size={16} className="absolute top-4 right-4 text-emerald-500 animate-in zoom-in-0 duration-500" />}
                             </button>
                         ))}
                     </div>
@@ -473,22 +473,28 @@ const POS = () => {
                     <button
                         onClick={handleCheckout}
                         disabled={cart.length === 0 || loading}
-                        className="w-full h-28 bg-[#0F172A] text-white rounded-[2.5rem] shadow-2xl shadow-slate-900/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-between px-10 disabled:opacity-50 disabled:scale-100 disabled:grayscale group"
+                        className="w-full h-28 bg-[#0F172A] text-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-between px-10 disabled:opacity-50 disabled:scale-100 disabled:grayscale group relative overflow-hidden"
                     >
-                        <div className="text-left">
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="text-left relative z-10">
                             <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 mb-1">Finalize Checkout</p>
                             <span className="font-black text-4xl tracking-tighter uppercase italic">Confirmar</span>
                         </div>
                         {loading ? (
                             <Activity className="animate-spin text-emerald-400" size={40} />
                         ) : (
-                            <div className="w-16 h-16 bg-white/5 rounded-[1.25rem] flex items-center justify-center group-hover:bg-emerald-500 group-hover:scale-110 transition-all border border-white/5">
+                            <div className="w-16 h-16 bg-white/5 rounded-[1.25rem] flex items-center justify-center group-hover:bg-emerald-500 group-hover:scale-110 transition-all border border-white/5 relative z-10">
                                 <ShoppingCart size={32} className="text-emerald-400 group-hover:text-white" />
                             </div>
                         )}
                     </button>
                 </div>
             </div>
+
+            {/* Background Decorative Accents */}
+            <div className="fixed top-20 right-20 w-[600px] h-[600px] bg-indigo-500/5 blur-[150px] rounded-full pointer-events-none -z-10 animate-pulse"></div>
+            <div className="fixed -bottom-20 -left-20 w-[600px] h-[600px] bg-emerald-500/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
+
 
             {/* Saved Tickets Modal */}
             {showTicketModal && (
