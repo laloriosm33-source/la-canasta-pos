@@ -15,11 +15,24 @@ app.use(cors({
 }));
 app.use(express.json());
 
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
 // Routes
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', async (req: Request, res: Response) => {
+    let dbStatus = 'unknown';
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        dbStatus = 'connected';
+    } catch (e) {
+        dbStatus = 'error: ' + (e as Error).message;
+    }
+
     res.json({ 
         status: 'ok', 
         service: 'La Canasta API', 
+        database: dbStatus,
         environment: process.env.NODE_ENV,
         timestamp: new Date() 
     });
