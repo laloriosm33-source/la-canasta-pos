@@ -1,7 +1,18 @@
 import axios from 'axios';
 
+const getBaseURL = () => {
+    const url = import.meta.env.VITE_API_URL;
+    if (!url) {
+        return import.meta.env.DEV ? 'http://localhost:3000' : 'https://lacanasta-api-h629.onrender.com/api';
+    }
+    // Append /api if it's a Render URL provided by Blueprint service linking
+    return url.includes('onrender.com') && !url.endsWith('/api') 
+        ? (url.endsWith('/') ? `${url}api` : `${url}/api`)
+        : url;
+};
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : 'https://lacanasta-api-h629.onrender.com/api'),
+    baseURL: getBaseURL(),
 });
 
 api.interceptors.request.use((config) => {
