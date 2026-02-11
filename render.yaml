@@ -1,37 +1,46 @@
 services:
-  # Backend API
+  # API Service
   - type: web
     name: lacanasta-api
-    env: node
-    plan: free # Plan gratuito de Web Service
+    runtime: node
+    repo: https://github.com/laloriosm33-source/la-canasta-pos
+    plan: free
+    region: oregon
     rootDir: api
-    # Construcción profesional: instala, configura y compila en el servidor
     buildCommand: npm install && npm run render-build
-    # Iniciar servidor
-    startCommand: npm start
+    startCommand: node dist/server.js
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: lacanasta-db
-          property: connectionString
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 3000
-      - key: CORS_ORIGIN
-        value: https://lacanasta-erp.com
-      - key: JWT_SECRET
-        generateValue: true
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
       - key: CORS_ORIGIN
         value: https://lacanasta-erp.com
+      - key: JWT_SECRET
+        generateValue: true
       - key: DATABASE_URL
         fromDatabase:
           name: lacanasta-db
           property: connectionString
+    autoDeployTrigger: commit
+
+  # Frontend Service (Static Site)
+  - type: static
+    name: admin-dashboard
+    repo: https://github.com/laloriosm33-source/la-canasta-pos
+    rootDir: admin-dashboard
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: lacanasta-api
+          property: url
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
 
 databases:
   - name: lacanasta-db

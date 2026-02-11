@@ -5,10 +5,6 @@ Write-Host "--- Iniciando Validación de Sistema ---" -ForegroundColor Cyan
 # 1. Comprobar dependencias
 Write-Host "📦 Verificando dependencias..."
 Set-Location api
-# Sincronizar schema de producción si existe
-if (Test-Path "prisma\schema.prod.prisma") {
-    Copy-Item "prisma\schema.prod.prisma" "prisma\schema.prisma"
-}
 npm install
 Set-Location ..
 Set-Location admin-dashboard
@@ -37,10 +33,9 @@ Set-Location ..
 # 4. Git Sync
 Write-Host "Git: Sincronizando con repositorio remoto..."
 git add .
-git commit -m "🚀 Deployment Auto-sync: Cleanup, PWA, and production DB schema optimization"
+git commit -m "🚀 Deployment Auto-sync: Cleanup, PWA fixes, and Full Render Config"
 git push origin main
 
 Write-Host "✅ ¡Proceso completado!" -ForegroundColor Green
-Write-Host "Railway y Vercel se actualizarán automáticamente en unos minutos."
-Write-Host "Dashboard: https://lacanasta-erp.com"
-Write-Host "API: https://lacanasta-api-h629.onrender.com/health"
+Write-Host "El sistema se actualizará automáticamente en Render."
+Write-Host "Dashboard: https://dashboard.render.com"
