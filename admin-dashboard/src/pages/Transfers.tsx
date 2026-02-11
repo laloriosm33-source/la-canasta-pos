@@ -64,7 +64,7 @@ const Transfers = () => {
             setTransfers(tRes.data);
             setBranches(bRes.data);
             setProducts(pRes.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al cargar datos logísticos');
         } finally {
             setLoading(false);
@@ -72,7 +72,8 @@ const Transfers = () => {
     }, []);
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
     }, [fetchData]);
 
     const addItem = () => {
@@ -108,8 +109,9 @@ const Transfers = () => {
             setIsModalOpen(false);
             fetchData();
             setFormData({ sourceBranchId: '', destBranchId: '', details: [] });
-        } catch (error: any) {
-            toast.error(error.response?.data?.error || 'Fallo en la sincronización del traspaso');
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { error?: string } } };
+            toast.error(err.response?.data?.error || 'Fallo en la sincronización del traspaso');
         }
     };
 
@@ -119,7 +121,7 @@ const Transfers = () => {
             await api.post(`/transfers/${id}/complete`);
             toast.success('Traspaso consolidado: Stock actualizado');
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('Error al consolidar traspaso');
         }
     };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Save, Building2, MapPin, Phone, Hash, ShieldCheck, Printer, Globe, Palette } from 'lucide-react';
 import api from '../services/api';
 import toast, { Toaster } from 'react-hot-toast';
@@ -16,20 +16,21 @@ const Settings = () => {
     });
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        fetchSettings();
-    }, []);
-
-    const fetchSettings = async () => {
+    const fetchSettings = useCallback(async () => {
         try {
             const res = await api.get('/settings');
             if (Object.keys(res.data).length > 0) {
                 setSettings(prev => ({ ...prev, ...res.data }));
             }
-        } catch (error) {
+        } catch {
             console.error("Error al cargar configuración remota");
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => fetchSettings(), 0);
+        return () => clearTimeout(timer);
+    }, [fetchSettings]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -49,7 +50,7 @@ const Settings = () => {
                     fontFamily: 'Inter, sans-serif'
                 }
             });
-        } catch (error) {
+        } catch {
             toast.error("Error al persistir configuración");
         } finally {
             setLoading(false);

@@ -1,4 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+// ... (skipping some code if needed, but replace_file_content needs exact match)
+// Actually I'll do it in chunks.
+// First fix the import.
+
 import {
     Search,
     ShoppingCart,
@@ -45,6 +50,14 @@ interface SavedTicket {
     timestamp: number;
 }
 
+interface Shift {
+    id: string;
+    userId: string;
+    startTime: string;
+    endTime?: string;
+    initialCash: number;
+}
+
 const POS = () => {
     const { selectedBranchId } = useStore();
 
@@ -72,12 +85,17 @@ const POS = () => {
     const [savedTickets, setSavedTickets] = useState<SavedTicket[]>([]);
     const [manualQty, setManualQty] = useState('1');
 
-    const [activeShift, setActiveShift] = useState<any>(null);
+    const [activeShift, setActiveShift] = useState<Shift | null>(null);
     const [showShiftModal, setShowShiftModal] = useState(false);
     const [initialCash, setInitialCash] = useState('0');
     const [businessInfo, setBusinessInfo] = useState({ name: 'LA CANASTA', address: '' });
 
-    const fetchSettings = async () => {
+    const user = useMemo(() => {
+        const u = localStorage.getItem('user');
+        return u ? JSON.parse(u) : {};
+    }, []);
+
+    const fetchSettings = useCallback(async () => {
         try {
             const res = await api.get('/settings');
             if (res.data.businessName) {
@@ -86,21 +104,20 @@ const POS = () => {
                     address: res.data.address || ''
                 });
             }
-        } catch (e) { console.error("Error fetching settings for POS"); }
-    };
+        } catch { console.error("Error fetching settings for POS"); }
+    }, []);
 
     const handleOpenShift = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
             const res = await api.post('/finance/shifts/open', {
-                userId: user.id,
-                initialCash: parseFloat(initialCash)
+                initialCash: parseFloat(initialCash),
+                branchId: selectedBranchId
             });
             setActiveShift(res.data);
             setShowShiftModal(false);
             toast.success("Turno abierto con éxito");
-        } catch (error) {
+        } catch {
             toast.error("Error al abrir el turno");
         }
     };
@@ -117,30 +134,35 @@ const POS = () => {
             setCategories(catRes.data);
             setCustomers(custRes.data);
 
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const myOpenShift = shiftRes.data.find((s: any) => s.userId === user.id && !s.endTime);
+            const myOpenShift = shiftRes.data.find((s: Shift) => s.userId === user.id && !s.endTime);
             if (myOpenShift) {
                 setActiveShift(myOpenShift);
             } else {
                 setShowShiftModal(true);
             }
-        } catch (error) {
+        } catch {
             toast.error("Error al sincronizar datos del catálogo.");
         }
-    }, [selectedBranchId]);
+    }, [user.id]);
 
     useEffect(() => {
-        fetchInitialData();
-        fetchSettings();
+        const timer = setTimeout(() => {
+            fetchInitialData();
+            fetchSettings();
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [fetchInitialData, fetchSettings]);
+
+    useEffect(() => {
         const saved = localStorage.getItem('pos_tickets');
         if (saved) {
             try {
                 setSavedTickets(JSON.parse(saved));
-            } catch (e) {
-                console.error("Error parsing saved tickets", e);
+            } catch {
+                console.error("Error parsing saved tickets");
             }
         }
-    }, [fetchInitialData]);
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('pos_tickets', JSON.stringify(savedTickets));
@@ -241,7 +263,7 @@ const POS = () => {
             setSelectedCustomer(null);
             setPaymentMethod('CASH');
             fetchInitialData(); // Refresh stock
-        } catch (error) {
+        } catch {
             toast.error("Error crítico al procesar el pago.");
         } finally {
             setLoading(false);
@@ -435,7 +457,7 @@ const POS = () => {
                         ].map((m) => (
                             <button
                                 key={m.id}
-                                onClick={() => (m.id === 'CREDIT' && !selectedCustomer) ? toast.error('Selecciona el Cliente para el Crédito') : setPaymentMethod(m.id as any)}
+                                onClick={() => (m.id === 'CREDIT' && !selectedCustomer) ? toast.error('Selecciona el Cliente para el Crédito') : setPaymentMethod(m.id as 'CASH' | 'TRANSFER' | 'CREDIT')}
                                 className={`relative p-5 rounded-[2rem] border-2 transition-all duration-500 flex flex-col items-center gap-3 overflow-hidden
                                 ${m.active ? 'border-indigo-500 bg-white shadow-2xl scale-[1.05]' : 'border-slate-200 text-slate-400 bg-white hover:border-slate-300'}`}
                             >

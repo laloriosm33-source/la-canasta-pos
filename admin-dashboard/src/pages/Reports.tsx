@@ -46,13 +46,14 @@ const Reports = () => {
         try {
             const res = await api.get('/sales');
             setSales(res.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al sincronizar motor analítico');
         }
     }, []);
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
     }, [fetchData]);
 
     const filteredSales = useMemo(() => {
@@ -112,7 +113,7 @@ const Reports = () => {
                         {['daily', 'weekly', 'monthly'].map((t) => (
                             <button
                                 key={t}
-                                onClick={() => setTimeframe(t as any)}
+                                onClick={() => setTimeframe(t as 'daily' | 'weekly' | 'monthly')}
                                 className={`px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all ${timeframe === t ? 'bg-white text-slate-900 shadow-lg' : 'text-slate-500 hover:text-white'
                                     }`}
                             >

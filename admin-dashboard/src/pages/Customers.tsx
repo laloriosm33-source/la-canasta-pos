@@ -47,7 +47,7 @@ const Customers = () => {
             if (branchRes.data.length > 0 && !formData.branchId) {
                 setFormData(prev => ({ ...prev, branchId: branchRes.data[0].id }));
             }
-        } catch (error) {
+        } catch {
             toast.error('Error al sincronizar base de clientes');
         } finally {
             setLoading(false);
@@ -55,7 +55,8 @@ const Customers = () => {
     }, [formData.branchId]);
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
     }, [fetchData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -69,7 +70,7 @@ const Customers = () => {
                 name: '', phone: '', email: '', address: '', branchId: branches[0]?.id || '',
                 rfc: '', taxRegime: '', zipCode: ''
             });
-        } catch (error) {
+        } catch {
             toast.error('Ocurrió un error al procesar el registro');
         }
     };
@@ -87,7 +88,7 @@ const Customers = () => {
             setPaymentModalOpen(false);
             setPaymentData({ amount: '', method: 'CASH' });
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error("Error al registrar el flujo de caja.");
         }
     };

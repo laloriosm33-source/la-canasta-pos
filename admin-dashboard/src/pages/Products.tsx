@@ -60,7 +60,7 @@ const Products = () => {
             setProducts(pRes.data);
             setCategories(cRes.data);
             setProviders(provRes.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al cargar datos del catálogo');
         } finally {
             setLoading(false);
@@ -68,7 +68,8 @@ const Products = () => {
     }, []);
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
     }, [fetchData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -93,7 +94,7 @@ const Products = () => {
             }
             setIsModalOpen(false);
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('Error al procesar la solicitud');
         }
     };
@@ -120,7 +121,7 @@ const Products = () => {
             await api.delete(`/products/${id}`);
             toast.success('Eliminado del catálogo');
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('Error: El producto tiene registros vinculados.');
         }
     };

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { DollarSign, ShoppingBag, Users, TrendingUp, Box, Store, ArrowUpRight, ArrowDownRight, Activity, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
@@ -56,13 +56,6 @@ const Dashboard = () => {
     const [allSales, setAllSales] = useState<Sale[]>([]);
     const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
 
-    const [stats, setStats] = useState({
-        totalSales: 0,
-        orderCount: 0,
-        customerCount: 0,
-        recentSales: [] as Sale[]
-    });
-
     const fetchData = useCallback(async () => {
         try {
             const [salesRes, custRes] = await Promise.all([
@@ -71,36 +64,46 @@ const Dashboard = () => {
             ]);
             setAllSales(salesRes.data);
             setAllCustomers(custRes.data);
-        } catch (error) {
-            console.error("Dashboard error:", error);
+        } catch {
+            console.error("Dashboard error");
         }
     }, []);
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
     }, [fetchData]);
 
-    useEffect(() => {
-        const filteredSales = selectedBranchId === 'all'
+    const filteredSales = useMemo(() => {
+        return selectedBranchId === 'all'
             ? allSales
             : allSales.filter(s => s.branchId === selectedBranchId);
+    }, [selectedBranchId, allSales]);
 
-        const filteredCustomers = selectedBranchId === 'all'
+    const filteredCustomers = useMemo(() => {
+        return selectedBranchId === 'all'
             ? allCustomers
             : allCustomers.filter(c => c.branchId === selectedBranchId);
+    }, [selectedBranchId, allCustomers]);
 
-        const total = filteredSales.reduce((acc, sale) => acc + parseFloat(sale.total), 0);
+    const stats = useMemo(() => {
+        const totalSales = filteredSales.reduce((acc: number, sale: Sale) => acc + parseFloat(sale.total), 0);
+        const orderCount = filteredSales.length;
+        const customerCount = filteredCustomers.length;
+        const recentSales = [...filteredSales].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
+        
+        return {
+            totalSales,
+            orderCount,
+            customerCount,
+            recentSales
+        };
+    }, [filteredSales, filteredCustomers]);
 
-        setStats({
-            totalSales: total,
-            orderCount: filteredSales.length,
-            customerCount: filteredCustomers.length,
-            recentSales: [...filteredSales].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6)
-        });
-    }, [selectedBranchId, allSales, allCustomers]);
-
-    const userStr = localStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : null;
+    const user = useMemo(() => {
+        const userStr = localStorage.getItem('user');
+        return userStr ? JSON.parse(userStr) : null;
+    }, []);
 
     return (
         <div className="space-y-10">

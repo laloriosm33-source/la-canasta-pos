@@ -26,7 +26,7 @@ const Providers = () => {
         try {
             const res = await api.get('/providers');
             setProviders(res.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al cargar proveedores');
         } finally {
             setLoading(false);
@@ -34,7 +34,8 @@ const Providers = () => {
     }, []);
 
     useEffect(() => {
-        fetchProviders();
+        const timer = setTimeout(() => fetchProviders(), 0);
+        return () => clearTimeout(timer);
     }, [fetchProviders]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -50,7 +51,7 @@ const Providers = () => {
             setIsModalOpen(false);
             fetchProviders();
             setFormData({ id: '', name: '', contact: '', phone: '', email: '', rfc: '', address: '' });
-        } catch (error) {
+        } catch {
             toast.error('Error al guardar proveedor');
         }
     };
@@ -61,7 +62,7 @@ const Providers = () => {
             await api.delete(`/providers/${id}`);
             toast.success('Proveedor eliminado');
             fetchProviders();
-        } catch (error) {
+        } catch {
             toast.error('Error al eliminar (puede tener productos asociados)');
         }
     };

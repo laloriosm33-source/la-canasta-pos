@@ -48,7 +48,15 @@ const Finances = () => {
     const [loading, setLoading] = useState(true);
     const [isMovementModalOpen, setIsMovementModalOpen] = useState(false);
     const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
-    const [logs, setLogs] = useState<any[]>([]);
+    interface SystemLog {
+        id: string;
+        date: string;
+        action: string;
+        details?: string;
+        user?: { name: string };
+    }
+
+    const [logs, setLogs] = useState<SystemLog[]>([]);
     const [activeTab, setActiveTab] = useState<'MOVEMENTS' | 'SHIFTS' | 'EXPENSES' | 'AUDIT'>('MOVEMENTS');
 
     // Form States
@@ -69,7 +77,7 @@ const Finances = () => {
             setShifts(sRes.data);
             setExpenses(eRes.data);
             setLogs(logRes.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al sincronizar datos financieros');
         } finally {
             setLoading(false);
@@ -77,8 +85,9 @@ const Finances = () => {
     }, [selectedBranchId]);
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
+    }, [fetchData, selectedBranchId]);
 
     const handleMovementSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -95,7 +104,7 @@ const Finances = () => {
             setIsMovementModalOpen(false);
             setMovementData({ type: 'IN', amount: '', reason: '', branchId: '' });
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('Error al procesar flujo de caja');
         }
     };
@@ -110,7 +119,7 @@ const Finances = () => {
             });
             toast.success('Turno cerrado y sincronizado');
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('Error al cerrar el turno');
         }
     };
@@ -128,7 +137,7 @@ const Finances = () => {
             setIsExpenseModalOpen(false);
             setExpenseData({ amount: '', description: '', category: 'General', branchId: '' });
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('Error al registrar gasto');
         }
     };

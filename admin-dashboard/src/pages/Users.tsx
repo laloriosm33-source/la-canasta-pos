@@ -49,13 +49,14 @@ const Users = () => {
             ]);
             setUsers(userRes.data);
             setBranches(branchRes.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al sincronizar lista de personal');
         }
     }, []);
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
     }, [fetchData]);
 
     const handleOpenModal = (user?: User) => {
@@ -112,7 +113,7 @@ const Users = () => {
             }
             setIsModalOpen(false);
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('Error al guardar cambios');
         }
     };
@@ -123,7 +124,7 @@ const Users = () => {
             await api.delete(`/users/${id}`);
             toast.success('Cuenta eliminada');
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error('No se puede eliminar la cuenta principal');
         }
     };

@@ -92,7 +92,7 @@ const Inventory = () => {
                 }
             });
             setInventory(items);
-        } catch (error) {
+        } catch {
             toast.error('Error al cargar datos');
         } finally {
             setLoading(false);
@@ -104,13 +104,14 @@ const Inventory = () => {
             const res = await api.get('/inventory/history');
             setHistory(res.data);
             setIsHistoryModalOpen(true);
-        } catch (error) {
+        } catch {
             toast.error('No se pudo cargar el historial');
         }
     };
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => fetchData(), 0);
+        return () => clearTimeout(timer);
     }, [fetchData]);
 
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -136,7 +137,7 @@ const Inventory = () => {
 
             toast.success("Inventario actualizado");
             fetchData();
-        } catch (err) {
+        } catch {
             toast.error("Error al actualizar inventario");
         }
     };
@@ -164,7 +165,7 @@ const Inventory = () => {
             setIsEntryModalOpen(false);
             setEntryData({ productId: '', quantity: '', reason: 'Entrada de Mercancía' });
             fetchData();
-        } catch (error) {
+        } catch {
             toast.error("Error al ingresar mercancía");
         }
     };

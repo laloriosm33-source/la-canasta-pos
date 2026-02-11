@@ -52,7 +52,7 @@ const Sales = () => {
         try {
             const res = await api.get('/sales');
             setSales(res.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al sincronizar historial de transacciones');
         } finally {
             setLoading(false);
@@ -64,7 +64,7 @@ const Sales = () => {
     }, [fetchSales]);
 
     const filteredSales = sales.filter(s => {
-        const matchesBranch = selectedBranchId === 'all' || (s as any).branchId === selectedBranchId;
+        const matchesBranch = selectedBranchId === 'all' || (s as Sale & { branchId: string }).branchId === selectedBranchId;
         const matchesSearch = s.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             s.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             s.user?.name?.toLowerCase().includes(searchTerm.toLowerCase());

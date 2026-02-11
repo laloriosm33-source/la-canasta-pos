@@ -35,6 +35,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useStore = () => {
     const context = useContext(StoreContext);
     if (!context) throw new Error('useStore must be used within StoreProvider');

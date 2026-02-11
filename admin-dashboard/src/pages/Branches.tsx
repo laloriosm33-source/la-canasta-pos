@@ -25,7 +25,7 @@ const Branches = () => {
         try {
             const res = await api.get('/branches');
             setBranches(res.data);
-        } catch (error) {
+        } catch {
             toast.error('Error al cargar sucursales');
         } finally {
             setLoading(false);
@@ -33,7 +33,8 @@ const Branches = () => {
     }, []);
 
     useEffect(() => {
-        fetchBranches();
+        const timer = setTimeout(() => fetchBranches(), 0);
+        return () => clearTimeout(timer);
     }, [fetchBranches]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -49,7 +50,7 @@ const Branches = () => {
             setIsModalOpen(false);
             fetchBranches();
             setFormData({ id: '', name: '', address: '', phone: '' });
-        } catch (error) {
+        } catch {
             toast.error('Error al guardar sucursal');
         }
     };
@@ -60,7 +61,7 @@ const Branches = () => {
             await api.delete(`/branches/${id}`);
             toast.success(`Sucursal "${name}" eliminada`);
             fetchBranches();
-        } catch (error) {
+        } catch {
             toast.error('No se puede eliminar una sucursal con registros activos');
         }
     };
