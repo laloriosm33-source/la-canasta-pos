@@ -18,14 +18,23 @@ try {
     process.exit(1);
 }
 
-// 2. Generar Cliente (Usando la ruta directa al código de Prisma para evitar bloqueos)
+// 2. Generar Cliente y Sincronizar Base de Datos
 try {
-    console.log('🔄 Generando motor de datos...');
+    console.log('🔄 Generando motor de datos y sincronizando esquema...');
     const prismaBin = path.resolve(__dirname, '../node_modules/prisma/build/index.js');
+    
+    // Generar cliente
     execSync(`node ${prismaBin} generate`, { stdio: 'inherit' });
-    console.log('✅ Motor de datos listo.');
+    
+    // Ejecutar migraciones solo si hay una DATABASE_URL (Evita errores en local/builds parciales)
+    if (process.env.DATABASE_URL) {
+        console.log('📡 Aplicando cambios en la base de datos remota...');
+        execSync(`node ${prismaBin} migrate deploy`, { stdio: 'inherit' });
+    }
+    
+    console.log('✅ Base de datos y motor listos.');
 } catch (e) {
-    console.error('❌ Error en motor de datos:', e.message);
+    console.error('❌ Error en motor de datos o migraciones:', e.message);
     process.exit(1);
 }
 
