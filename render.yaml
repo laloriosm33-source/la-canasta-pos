@@ -14,14 +14,16 @@ services:
         fromDatabase:
           name: lacanasta-db
           property: connectionString
-      - key: JWT_SECRET
-        generateValue: true
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3000
       - key: CORS_ORIGIN
         value: https://lacanasta-erp.com
+      - key: JWT_SECRET
+        sync: false # Render pedirá este valor si no existe
+      - key: DATABASE_URL
+        sync: false # Render pedirá la URL de Supabase
 
 databases:
   # Base de Datos (PostgreSQL) - Plan Gratuito
