@@ -12,7 +12,6 @@ import {
     Truck,
     PieChart,
     ChevronRight,
-    Store,
     History,
     Wallet,
     BarChart3,
@@ -125,8 +124,8 @@ export default function Sidebar() {
             {/* Header / Brand */}
             <div className="p-10 pb-6">
                 <div className="flex items-center gap-4 mb-10 group cursor-pointer" onClick={() => navigate('/')}>
-                    <div className="w-14 h-14 bg-emerald-500 rounded-[1.25rem] flex items-center justify-center shadow-2xl shadow-emerald-500/20 group-hover:scale-110 transition-all duration-500 group-hover:rotate-6">
-                        <Store className="text-white" size={28} />
+                    <div className="w-16 h-16 rounded-[1.25rem] shadow-2xl shadow-emerald-500/20 group-hover:scale-105 transition-all duration-500 overflow-hidden bg-white">
+                        <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
                     </div>
                     <div>
                         <h1 className="text-2xl font-black tracking-tighter text-white leading-none italic uppercase">Canasta</h1>
@@ -178,7 +177,10 @@ export default function Sidebar() {
             <nav className="flex-1 px-6 overflow-y-auto custom-scrollbar pb-10 space-y-10">
                 {categories.map((cat, idx) => (
                     <div key={idx} className="space-y-4">
-                        <p className="px-4 text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">{cat.title}</p>
+                        <p className="px-4 text-[10px] font-black text-emerald-500/80 uppercase tracking-[0.4em] italic flex items-center gap-2">
+                             <div className="w-1 h-1 rounded-full bg-emerald-500"></div>
+                             {cat.title}
+                        </p>
                         <div className="space-y-1.5">
                             {cat.items.filter((item) => user?.role === 'ADMIN' || permissions.includes(item.required)).map((item) => {
                                 const active = isActive(item.path);
@@ -188,13 +190,14 @@ export default function Sidebar() {
                                         to={item.path}
                                         className={`flex items-center justify-between group px-5 py-4 rounded-[1.25rem] transition-all duration-500 relative overflow-hidden ${active
                                             ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-2xl shadow-indigo-500/20 scale-[1.02]'
-                                            : 'text-slate-500 hover:text-white hover:bg-white/[0.03]'
+                                            : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
                                             }`}
                                     >
-                                        <div className="flex items-center gap-4 relative z-10">
-                                            <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${active ? 'bg-emerald-400 scale-150' : 'bg-transparent'}`}></div>
-                                            <item.icon size={22} className={`${active ? 'text-white' : 'text-slate-600 group-hover:text-emerald-400'} transition-colors duration-500`} />
-                                            <span className="font-black text-xs uppercase tracking-widest italic">{item.label}</span>
+                                        <div className="flex items-center gap-4 relative z-10 w-full">
+                                            <item.icon size={22} className={`${active ? 'text-white' : 'text-slate-500 group-hover:text-emerald-400'} transition-colors duration-500`} />
+                                            <span className="font-black text-xs uppercase tracking-widest italic flex-1">{item.label}</span>
+                                            {!active && <ChevronRight size={14} className="text-slate-700 group-hover:text-white transition-colors" />}
+                                            {active && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>}
                                         </div>
                                     </Link>
                                 );

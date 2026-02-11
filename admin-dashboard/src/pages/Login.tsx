@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBasket, Loader2, Mail, Lock, User, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { Loader2, Mail, Lock, User, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -79,11 +79,11 @@ const Login = () => {
                 <div className="flex flex-col items-center mb-10">
                     <div className="relative group">
                         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                        <div className="relative bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl border border-white/5">
-                            <ShoppingBasket size={48} className="text-white" strokeWidth={1.5} />
+                        <div className="relative w-40 h-40 rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden bg-white">
+                             <img src="/logo.png" alt="La Canasta Logo" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                         </div>
-                        <div className="absolute -top-2 -right-2 bg-emerald-500 p-2 rounded-full shadow-lg animate-bounce">
-                            <Sparkles size={16} className="text-white" />
+                        <div className="absolute -top-4 -right-4 bg-emerald-500 p-3 rounded-full shadow-lg animate-bounce border-4 border-[#0F172A]">
+                            <Sparkles size={20} className="text-white" />
                         </div>
                     </div>
                     <div className="mt-8 text-center">
