@@ -26,10 +26,18 @@ try {
     // Generar cliente
     execSync(`node ${prismaBin} generate`, { stdio: 'inherit' });
     
-    // Ejecutar migraciones solo si hay una DATABASE_URL (Evita errores en local/builds parciales)
+    // Ejecutar migraciones solo si hay una DATABASE_URL
     if (process.env.DATABASE_URL) {
         console.log('📡 Aplicando cambios en la base de datos remota...');
         execSync(`node ${prismaBin} migrate deploy`, { stdio: 'inherit' });
+        
+        console.log('🌱 Creando usuario administrador inicial...');
+        try {
+            execSync(`node scripts/seed-admin.js`, { stdio: 'inherit' });
+            console.log('✅ Usuario admin listo.');
+        } catch (seedErr) {
+            console.log('⚠️ Aviso: El usuario admin ya existe o no se pudo crear (esto es normal si ya existe).');
+        }
     }
     
     console.log('✅ Base de datos y motor listos.');

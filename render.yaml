@@ -15,10 +15,7 @@ services:
       - key: PORT
         value: 10000
       - key: CORS_ORIGIN
-        fromService:
-          type: static
-          name: admin-dashboard
-          property: url
+        value: https://www.lacanasta-erp.com,https://lacanasta-erp.com,https://admin-dashboard.onrender.com
       - key: JWT_SECRET
         generateValue: true
       - key: DATABASE_URL
