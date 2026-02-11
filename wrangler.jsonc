@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "la-canasta-erp",
+  "compatibility_date": "2026-02-11",
+  "assets": {
+    "directory": "admin-dashboard/dist"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

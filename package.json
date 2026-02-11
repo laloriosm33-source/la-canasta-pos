@@ -1,0 +1,9 @@
+{
+  "name": "la-canasta-erp-root",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm install --prefix api && npm install --prefix admin-dashboard",
+    "build:all": "npm run build --prefix admin-dashboard && npm run build --prefix api",
+    "deploy:cloud": "npm run build:all && npx wrangler pages deploy admin-dashboard/dist"
+  }
+}
