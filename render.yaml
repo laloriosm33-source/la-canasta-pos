@@ -18,6 +18,10 @@ services:
         generateValue: true
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3000
+      - key: CORS_ORIGIN
+        value: https://lacanasta-erp.com
 
 databases:
   # Base de Datos (PostgreSQL) - Plan Gratuito
